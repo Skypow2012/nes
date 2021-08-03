@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Embedding Example</title>
+	<script type="text/javascript" src="./js/jsnes.min.js"></script>
+	<script type="text/javascript" src="./js/nes-embed.js"></script>
+	<script>
+		window.onload = function () {
+			nes_load_url("nes-canvas", "./rom/InterglacticTransmissing.nes");
+			document.body.addEventListener("dragover", function (ev) {
+				ev.preventDefault();
+			});
+			document.body.ondrop = function (ev) {
+				ev.preventDefault();
+				nes_load_local(ev.dataTransfer.files[0])
+			}
+			window.addEventListener('visibilitychange', (ev)=>{
+				console.log(document.visibilityState)
+				if (document.visibilityState === 'hidden') {
+					window.isStop = true;
+					
+					// 关闭音乐,防止噪音卡住
+					window.audio_ctx.close();
+				} else if (document.visibilityState === 'visible') {
+					delete window.isStop;
+				}
+			});
+		}
+	</script>
+</head>
+
+<body style="margin: 0;">
+	<div style="margin: auto; width: 512px;image-rendering: pixelated;">
+		<canvas id="nes-canvas" width="256" height="240" style="width: 100%" />
+	</div>
+	<p style="text-align: center;text-shadow: 1px #fff;">DPad: Arrow keys, Start: Enter, Select: Tab, A Button: A, B Button: S</p>
+</body>
+
+</html>
