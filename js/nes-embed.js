@@ -107,13 +107,18 @@ function nes_init(canvas_id){
 	script_processor.connect(window.audio_ctx.destination);
 }
 
+window.nesInited = false;
+window.nesAnimated = false;
+
 function nes_boot(rom_data){
 	nes.loadROM(rom_data);
-	window.requestAnimationFrame(onAnimationFrame);
+	if (!nesAnimated) window.requestAnimationFrame(onAnimationFrame);
+	nesAnimated = true;
 }
 
 function nes_load_url(canvas_id, path){
-	nes_init(canvas_id);
+	if (!window.nesInited) nes_init(canvas_id);
+	window.nesInited = true;
 	
 	var req = new XMLHttpRequest();
 	req.open("GET", path);
@@ -122,7 +127,7 @@ function nes_load_url(canvas_id, path){
 	
 	req.onload = function() {
 		if (this.status === 200) {
-		nes_boot(this.responseText);
+			nes_boot(this.responseText);
 		} else if (this.status === 0) {
 			// Aborted, so ignore error
 		} else {
