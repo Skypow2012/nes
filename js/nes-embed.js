@@ -25,7 +25,6 @@ var nes = new jsnes.NES({
 
 function onAnimationFrame(){
 	if (window.isStop) return;
-	console.log('xxx')
 	window.requestAnimationFrame(onAnimationFrame);
 	image.data.set(framebuffer_u8);
 	canvas_ctx.putImageData(image, 0, 0);
@@ -58,31 +57,29 @@ function audio_callback(event){
 	audio_read_cursor = (audio_read_cursor + len) & SAMPLE_MASK;
 }
 
+const nesKeys = [
+	jsnes.Controller.BUTTON_UP,
+	jsnes.Controller.BUTTON_DOWN,
+	jsnes.Controller.BUTTON_LEFT,
+	jsnes.Controller.BUTTON_RIGHT,
+	jsnes.Controller.BUTTON_A,
+	jsnes.Controller.BUTTON_B,
+	jsnes.Controller.BUTTON_SELECT,
+	jsnes.Controller.BUTTON_START
+]
+
 function keyboard(callback, event){
-	var player = 1;
-	switch(event.keyCode){
-		case 38: // UP
-			callback(player, jsnes.Controller.BUTTON_UP); break;
-		case 40: // Down
-			callback(player, jsnes.Controller.BUTTON_DOWN); break;
-		case 37: // Left
-			callback(player, jsnes.Controller.BUTTON_LEFT); break;
-		case 39: // Right
-			callback(player, jsnes.Controller.BUTTON_RIGHT); break;
-		case 65: // 'a' - qwerty, dvorak
-		case 81: // 'q' - azerty
-			callback(player, jsnes.Controller.BUTTON_A); break;
-		case 83: // 's' - qwerty, azerty
-		case 79: // 'o' - dvorak
-			callback(player, jsnes.Controller.BUTTON_B); break;
-		case 9: // Tab
-			callback(player, jsnes.Controller.BUTTON_SELECT); break;
-		case 13: // Return
-			callback(player, jsnes.Controller.BUTTON_START); break;
-		case 32: // Space
-			if (event.type === 'keydown') window.isSpeedUp = true;
-			else window.isSpeedUp = false;
-		default: break;
+	for (let i = 0; i < ctls.length; i++) {
+		var player;
+		if (i < 8) player = 1;
+		else if (i < 16) player = 2;
+		else player = undefined;
+		const ctlTar = ctlTars[i] || '';
+		const srcKeyCode = ctlTar.split('|')[1];
+		if (srcKeyCode === event.keyCode.toString()) {
+			if (player) callback(player, nesKeys[i%8]);
+			else window.isSpeedUp = event.type === 'keydown'
+		}
 	}
 }
 
