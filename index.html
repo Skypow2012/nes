@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="./js/jsnes.min.js"></script>
 	<script type="text/javascript" src="./js/nes-embed.js"></script>
 	<script>
+		window.firstIn = true;
 		window.onload = function () {
 			nes_load_url("nes-canvas", "./rom/InterglacticTransmissing.nes");
 			document.body.addEventListener("dragover", function (ev) {
@@ -25,8 +26,19 @@
 
 					// 关闭音乐,防止噪音卡住
 					window.audio_ctx.close();
+					delete window.audio_ctx;
+					delete window.script_processor;
 				} else if (document.visibilityState === 'visible') {
+					if (window.firstIn) {
+						window.firstIn = false;
+						return;
+					}
 					delete window.isStop;
+					// Setup audio.
+					window.audio_ctx = window.audio_ctx || new window.AudioContext();
+					window.script_processor = window.script_processor || window.audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2);
+					script_processor.onaudioprocess = audio_callback;
+					script_processor.connect(window.audio_ctx.destination);
 				}
 			});
 			get('https://tekii.cn/market/fc/roms', function (resTxt) {
