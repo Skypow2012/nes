@@ -110,6 +110,9 @@ function nes_boot(rom_data){
 	nes.loadROM(rom_data);
 	if (!nesAnimated) window.requestAnimationFrame(onAnimationFrame);
 	nesAnimated = true;
+	
+  loadBtn.disabled = true;
+  if (localStorage[localStorage.romurl]) loadBtn.disabled = false;
 }
 
 function nes_load_url(canvas_id, path){
@@ -123,6 +126,7 @@ function nes_load_url(canvas_id, path){
 	
 	req.onload = function() {
 		if (this.status === 200) {
+			localStorage.romurl = path;
 			nes_boot(this.responseText);
 		} else if (this.status === 0) {
 			// Aborted, so ignore error

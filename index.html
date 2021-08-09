@@ -49,12 +49,37 @@
 		}
 	</script>
 	<style>
+		body {
+			text-align: center;
+		}
+
 		a:focus,
 		input:focus,
 		#search-input:focus {
 			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 			-webkit-user-modify: read-write-plaintext-only;
 			outline: none
+		}
+
+		.saveLoad {
+			margin: auto;
+			margin-top: 10px;
+		}
+		.button {
+			margin-left: 50px;
+			width: 100px;
+			height: 30px;
+    	line-height: 30px;
+			border-radius: 2px;
+			border: 1px solid #fefefe;
+			background-color: #f5f5f5;
+			padding: 0px 4px;
+			user-select: none;
+			cursor: pointer;
+			outline: none;
+		}
+		.button:first-child {
+			margin-left: 0;
 		}
 
 		#search-input,
@@ -180,6 +205,10 @@
 	<div id="game-list-box"></div>
 	<div style="margin: auto; width: 512px;image-rendering: pixelated;">
 		<canvas id="nes-canvas" width="256" height="240" style="width: 100%" />
+	</div>
+	<div class="saveLoad">
+		<button class="button" onclick="saveData()" id="saveBtn" tabindex="-1">存档</button>
+		<button class="button" onclick="loadSavedData()" id="loadBtn" disabled tabindex="-1">读档</button>
 	</div>
 	<p class="tips" id="tips">按键配置</p>
 	<div id="ctl-list-box">
