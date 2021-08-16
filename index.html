@@ -49,8 +49,11 @@
 		}
 	</script>
 	<style>
+		html,
 		body {
 			text-align: center;
+			height: 100%;
+			font-size: 0;
 		}
 
 		a:focus,
@@ -58,7 +61,12 @@
 		#search-input:focus {
 			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 			-webkit-user-modify: read-write-plaintext-only;
-			outline: none
+			outline: none;
+		}
+
+		button,
+		p {
+			font-size: 16px;
 		}
 
 		.saveLoad {
@@ -203,9 +211,7 @@
 <body style="margin: 0;">
 	<input id="search-input" onkeyup="search(this.value)" placeholder="搜索游戏" tabindex="-1"></input>
 	<div id="game-list-box"></div>
-	<div style="margin: auto; width: 512px;image-rendering: pixelated;">
-		<canvas id="nes-canvas" width="256" height="240" style="width: 100%" />
-	</div>
+	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;" ondblclick="changeScreen()"></canvas>
 	<div class="saveLoad">
 		<button class="button" onclick="saveData()" id="saveBtn" tabindex="-1">存档</button>
 		<button class="button" onclick="loadSavedData()" id="loadBtn" disabled tabindex="-1">读档</button>

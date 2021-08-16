@@ -201,3 +201,19 @@ function setB2A(a, b, _k = []) {
     }
   }
 }
+
+window.isFullScreen = false;
+window.onresize = function() {
+  changeScreen({isResize: true});
+}
+function changeScreen(config={}) {
+  if (!config.isResize) window.isFullScreen = !window.isFullScreen;
+  if (window.isFullScreen) {
+    let w = window.innerWidth-284;
+    let h = window.innerHeight-50;
+    let minW = Math.min(w, h/480 * 512);
+    document.getElementById('nes-canvas').style.width = `${minW}px`;
+  } else {
+    document.getElementById('nes-canvas').style.width = '512px';
+  }
+}
