@@ -112,7 +112,12 @@ function nes_boot(rom_data){
 	nesAnimated = true;
 	
   loadBtn.disabled = true;
-  if (localStorage[localStorage.romurl]) loadBtn.disabled = false;
+	let romurl = localStorage.romurl;
+	if (window.utools) {
+		if (window.utools.db.get(romurl)) loadBtn.disabled = false;
+	} else {
+		if (localStorage[romurl]) loadBtn.disabled = false;
+	}
 }
 
 function nes_load_url(canvas_id, path){

@@ -64,30 +64,52 @@ const ctls = [
   '加速'
 ]
 
-const ctlTars = localStorage.ctlTars ? JSON.parse(localStorage.ctlTars) : [
-  'ArrowUp|38',
-  'ArrowDown|40',
-  'ArrowLeft|37',
-  'ArrowRight|39',
-  'a|65',
-  's|83',
-  'Tab|9',
-  'Enter|13',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  'Space|32'
-]
+let ctlTars;
+if (window.utools) {
+	window.utools.onPluginReady(function() {
+		if (window.utools.db.get('ctlTars')) {
+      let info = window.utools.db.get('ctlTars') || {_id: 'ctlTars'}
+      if (info && info.data) {
+        ctlTars = JSON.parse(info.data);
+        renderCtlList()
+      }
+		}
+	})
+} else if (localStorage) {
+	if (localStorage.ctlTars) ctlTars = JSON.parse(localStorage.ctlTars)
+}
+if (!ctlTars) {
+  ctlTars = [
+    'ArrowUp|38',
+    'ArrowDown|40',
+    'ArrowLeft|37',
+    'ArrowRight|39',
+    'a|65',
+    's|83',
+    'Tab|9',
+    'Enter|13',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    'Space|32'
+  ]
+}
 window.onkeydown = function (ev) {
   console.log(ev.key, ev.keyCode)
   if (window.ctlIdx !== undefined) {
     ctlTars[window.ctlIdx] = `${ev.key}|${ev.keyCode}`;
-    localStorage.ctlTars = JSON.stringify(ctlTars)
+    if (window.utools) {
+      let info = window.utools.db.get('ctlTars') || {_id: 'ctlTars'};
+      info.data = JSON.stringify(ctlTars);
+      window.utools.db.put(info);
+    } else {
+      localStorage.ctlTars = JSON.stringify(ctlTars)
+    }
   }
   renderCtlList()
 }
@@ -153,7 +175,13 @@ function saveData() {
   // tar.ppu.vramMirrorTable  = []; // 这个参数用来扩展地图内容，不能删
   // nes.ppu.vramMem = []; // 这个去掉了会灰屏
   delete nes.romData;
-  localStorage[key] = JSON.stringify(nes)
+  if (window.utools) {
+    let info = window.utools.db.get(key) || {_id: key};
+    info.data = JSON.stringify(nes);
+    window.utools.db.put(info);
+  } else {
+    localStorage[key] = JSON.stringify(nes)
+  }
   window.isSaving = false;
   loadBtn.disabled = false;
 }
@@ -161,12 +189,22 @@ function saveData() {
 
 function loadSavedData() {
   key = localStorage.romurl;
-  if (localStorage[key]) {
-    // 本地存储
-    if (localStorage[key]) {
-      nes2 = JSON.parse(localStorage[key]);
+  if (window.utools) {
+    if (window.utools.db.get(key)) {
+      let info = window.utools.db.get(key) || {_id: key};
+      if (info.data) {
+        nes2 = JSON.parse(info.data);
+      }
+      setB2A(nes, nes2);
     }
-    setB2A(nes, nes2);
+  } else {
+    if (localStorage[key]) {
+      // 本地存储
+      if (localStorage[key]) {
+        nes2 = JSON.parse(localStorage[key]);
+      }
+      setB2A(nes, nes2);
+    }
   }
 }
 
