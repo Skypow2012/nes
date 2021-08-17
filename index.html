@@ -26,20 +26,16 @@
 					window.isStop = true;
 
 					// 关闭音乐,防止噪音卡住
-					window.audio_ctx.close();
-					delete window.audio_ctx;
-					delete window.script_processor;
+					changeSound(false)
 				} else if (document.visibilityState === 'visible') {
 					if (window.firstIn) {
 						window.firstIn = false;
 						return;
 					}
 					delete window.isStop;
-					// Setup audio.
-					window.audio_ctx = window.audio_ctx || new window.AudioContext();
-					window.script_processor = window.script_processor || window.audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2);
-					script_processor.onaudioprocess = audio_callback;
-					script_processor.connect(window.audio_ctx.destination);
+					if (window.isSoundOpen) {
+						changeSound(true)
+					}
 				}
 			});
 			get('https://tekii.cn/market/fc/roms', function (resTxt) {
@@ -47,6 +43,24 @@
 				search();
 			})
 			renderCtlList()
+		}
+
+		window.isSoundOpen = true;
+		function changeSound(isOpen) {
+			window.isSoundOpen = isOpen;
+			document.getElementById('soundCtl').innerText = isOpen ? '静音' : '已静音';
+			if (!isOpen) {
+				window.audio_ctx && window.audio_ctx.close();
+				delete window.audio_ctx;
+				delete window.script_processor;
+			} else {
+				// Setup audio.
+				window.audio_ctx = window.audio_ctx || new window.AudioContext();
+				window.script_processor = window.script_processor || window.audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0,
+					2);
+				script_processor.onaudioprocess = audio_callback;
+				script_processor.connect(window.audio_ctx.destination);
+			}
 		}
 	</script>
 	<style>
@@ -74,11 +88,12 @@
 			margin: auto;
 			margin-top: 10px;
 		}
+
 		.button {
 			margin-left: 50px;
 			width: 100px;
 			height: 30px;
-    	line-height: 30px;
+			line-height: 30px;
 			border-radius: 2px;
 			border: 1px solid #fefefe;
 			background-color: #f5f5f5;
@@ -87,6 +102,7 @@
 			cursor: pointer;
 			outline: none;
 		}
+
 		.button:first-child {
 			margin-left: 0;
 		}
@@ -212,10 +228,12 @@
 <body style="margin: 0;">
 	<input id="search-input" onkeyup="search(this.value)" placeholder="搜索游戏" tabindex="-1"></input>
 	<div id="game-list-box"></div>
-	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;" ondblclick="changeScreen()"></canvas>
+	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;"
+		ondblclick="changeScreen()"></canvas>
 	<div class="saveLoad">
 		<button class="button" onclick="saveData()" id="saveBtn" tabindex="-1">存档</button>
 		<button class="button" onclick="loadSavedData()" id="loadBtn" disabled tabindex="-1">读档</button>
+		<button class="button" id="soundCtl" onclick="changeSound(!window.isSoundOpen)" tabindex="-1">静音</button>
 	</div>
 	<p class="tips" id="tips">按键配置</p>
 	<div id="ctl-list-box">
