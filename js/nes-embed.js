@@ -29,6 +29,7 @@ function onAnimationFrame(){
 	image.data.set(framebuffer_u8);
 	canvas_ctx.putImageData(image, 0, 0);
 	nes.frame()
+	processGp()
 	if (window.isSpeedUp) {
 		nes.frame()
 		nes.frame()
