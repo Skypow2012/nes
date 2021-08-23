@@ -25,7 +25,8 @@ var nes = new jsnes.NES({
 
 function onAnimationFrame(){
 	if (window.isStop) return;
-	window.requestAnimationFrame(onAnimationFrame);
+	window.clearTimeout(window.timer);
+	window.timer = window.setTimeout(onAnimationFrame, 16)
 	image.data.set(framebuffer_u8);
 	canvas_ctx.putImageData(image, 0, 0);
 	nes.frame()
