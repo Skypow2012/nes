@@ -26,16 +26,14 @@
 					window.isStop = true;
 
 					// 关闭音乐,防止噪音卡住
-					changeSound(false)
+					changeSound(false, true)
 				} else if (document.visibilityState === 'visible') {
 					if (window.firstIn) {
 						window.firstIn = false;
 						return;
 					}
 					delete window.isStop;
-					if (window.isSoundOpen) {
-						changeSound(true)
-					}
+					changeSound(window.isSoundOpen, true)
 				}
 			});
 			get('https://tekii.cn/market/fc/roms', function (resTxt) {
@@ -46,8 +44,10 @@
 		}
 
 		window.isSoundOpen = true;
-		function changeSound(isOpen) {
-			window.isSoundOpen = isOpen;
+		function changeSound(isOpen, isSys) {
+			if (!isSys) {
+				window.isSoundOpen = isOpen;
+			}
 			document.getElementById('soundCtl').innerText = isOpen ? '静音' : '已静音';
 			if (!isOpen) {
 				window.audio_ctx && window.audio_ctx.close();
