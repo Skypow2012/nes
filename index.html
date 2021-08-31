@@ -34,6 +34,7 @@
 					}
 					delete window.isStop;
 					changeSound(window.isSoundOpen, true)
+					window.requestAnimationFrame(onAnimationFrame);
 				}
 			});
 			get('https://tekii.cn/market/fc/roms', function (resTxt) {
