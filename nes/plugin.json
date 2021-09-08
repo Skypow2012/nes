@@ -1,0 +1,11 @@
+{
+	"main": "index.html",
+	"logo": "logo.png",
+	"features": [
+		{
+		  "code": "nes",
+		  "explain": "Source code is from https://jsnes.org/, you can find nes file in http://www.vgmuseum.com/nes.htm, enjoy :3",
+			"cmds":["mario", "nes", "xbw", "game"]
+		}
+	]
+}
