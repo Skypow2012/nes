@@ -12,7 +12,7 @@
 	<script>
 		window.firstIn = true;
 		window.onload = function () {
-			// nes_load_url("nes-canvas", "./rom/InterglacticTransmissing.nes");
+			nes_load_url("nes-canvas", "./rom/InterglacticTransmissing.nes");
 			document.body.addEventListener("dragover", function (ev) {
 				ev.preventDefault();
 			});
@@ -109,6 +109,7 @@
 		}
 
 		#search-input,
+		#select-btn,
 		#tips,
 		#game-list-box,
 		#ctl-list-box {
@@ -121,6 +122,13 @@
 			font-size: 16px;
 			color: #3cabff;
 			box-sizing: border-box;
+		}
+		
+		#select-btn {
+			display: inline-block;
+			color: #fff;
+			background: #fff0;
+			border: 0;
 		}
 
 		#search-input {
@@ -229,6 +237,8 @@
 <body style="margin: 0;">
 	<!-- <input id="search-input" onkeyup="search(this.value)" placeholder="搜索游戏" tabindex="-1"></input>
 	<div id="game-list-box"></div> -->
+	<button id="select-btn" tabindex="-1" onclick="this.blur();document.getElementById('loader').click();">选择</button>
+	<input id="loader" type="file" accept=".nes" onchange="nes_load_local(this.files[0]);" style="display:none">
 	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;"
 		ondblclick="changeScreen()"></canvas>
 	<div class="saveLoad">
