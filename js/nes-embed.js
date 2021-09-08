@@ -146,10 +146,14 @@ function nes_load_url(canvas_id, path){
 }
 
 function nes_load_local(file){
+	if (!window.nesInited) nes_init('nes-canvas');
+	window.nesInited = true;
+
 	var req = new FileReader();
-	
+	console.log(file);
+	localStorage.romurl = file.name;
 	req.onload = function(ev) {
-		nes.loadROM(ev.target.result);
+		nes_boot(ev.target.result);
 	};
 	
 	req.readAsBinaryString(file);

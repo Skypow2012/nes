@@ -192,6 +192,7 @@ function loadSavedData() {
   if (window.utools) {
     if (window.utools.db.get(key)) {
       let info = window.utools.db.get(key) || {_id: key};
+      console.log('info', info)
       if (info.data) {
         nes2 = JSON.parse(info.data);
       }

@@ -12,7 +12,6 @@
 	<script>
 		window.firstIn = true;
 		window.onload = function () {
-			nes_load_url("nes-canvas", "./rom/InterglacticTransmissing.nes");
 			document.body.addEventListener("dragover", function (ev) {
 				ev.preventDefault();
 			});
@@ -239,7 +238,7 @@
 	<div id="game-list-box"></div> -->
 	<button id="select-btn" tabindex="-1" onclick="this.blur();document.getElementById('loader').click();">选择</button>
 	<input id="loader" type="file" accept=".nes" onchange="nes_load_local(this.files[0]);" style="display:none">
-	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;"
+	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;background-color: #65686d;"
 		ondblclick="changeScreen()"></canvas>
 	<div class="saveLoad">
 		<button class="button" onclick="saveData()" id="saveBtn" tabindex="-1">存档</button>
