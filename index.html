@@ -37,10 +37,10 @@
 					window.requestAnimationFrame(onAnimationFrame);
 				}
 			});
-			get('https://tekii.cn/market/fc/roms', function (resTxt) {
-				window.games = JSON.parse(resTxt).info;
-				search();
-			})
+			// get('https://tekii.cn/market/fc/roms', function (resTxt) {
+			// 	window.games = JSON.parse(resTxt).info;
+			// 	search();
+			// })
 			renderCtlList()
 		}
 
@@ -227,8 +227,8 @@
 </head>
 
 <body style="margin: 0;">
-	<input id="search-input" onkeyup="search(this.value)" placeholder="搜索游戏" tabindex="-1"></input>
-	<div id="game-list-box"></div>
+	<!-- <input id="search-input" onkeyup="search(this.value)" placeholder="搜索游戏" tabindex="-1"></input>
+	<div id="game-list-box"></div> -->
 	<canvas id="nes-canvas" width="256" height="240" style="image-rendering: pixelated;"
 		ondblclick="changeScreen()"></canvas>
 	<div class="saveLoad">
