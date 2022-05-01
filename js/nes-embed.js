@@ -47,12 +47,11 @@ function processCombo() {
 	// console.log(downKeyDic)
 	for (keyCode in downKeyDic) {
 		let {i, ctlTar, isUp} = downKeyDic[keyCode];
-		_i = Math.abs(i)
-		player = _i / 8 | 0 + 1;
+		player = (i / 8 | 0) + 1;
 		if (keyCode !== ctlTar.split('|')[3]) continue; // 只有combo的才触发
 		if (player > 2) continue;
 		callback = isUp ? nes.buttonDown : nes.buttonUp;
-		callback(player, nesKeys[_i%8])
+		callback(player, nesKeys[i%8])
 		downKeyDic[keyCode].isUp = !isUp;
 		// console.log('downKeyDic', key, downKeyDic[key])
 	}
