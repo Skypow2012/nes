@@ -84,8 +84,8 @@ if (!ctlTars) {
     'ArrowDown|40',
     'ArrowLeft|37',
     'ArrowRight|39',
-    'a|65',
-    's|83',
+    'a|65|q|81',
+    's|83|w|87',
     'Tab|9',
     'Enter|13',
     '',
@@ -101,8 +101,18 @@ if (!ctlTars) {
 }
 window.onkeydown = function (ev) {
   console.log(ev.key, ev.keyCode)
+  oldCtlTar = ctlTars[window.ctlIdx] || '';
+  let [k1, kc1, k2, kc2] = oldCtlTar.split('|');
+  let needDel = ev.keyCode === 27; // 按下Esc就删除对应快捷键
   if (window.ctlIdx !== undefined) {
-    ctlTars[window.ctlIdx] = `${ev.key}|${ev.keyCode}`;
+    if (window.isCombo) {
+      k2 = needDel ? '' : ev.key;
+      kc2 = needDel ? '' : ev.keyCode;
+    } else {
+      k1 = needDel ? '' : ev.key;
+      kc1 = needDel ? '' : ev.keyCode;
+    }
+    ctlTars[window.ctlIdx] = `${k1||''}|${kc1||''}|${k2||''}|${kc2||''}`;
     if (window.utools) {
       let info = window.utools.db.get('ctlTars') || {_id: 'ctlTars'};
       info.data = JSON.stringify(ctlTars);
@@ -114,12 +124,13 @@ window.onkeydown = function (ev) {
   renderCtlList()
 }
 
-function startSetCtl(idx) {
+function startSetCtl(idx, config = {}) {
   window.ctlIdx = idx;
+  window.isCombo = config.isCombo;
   let user = '';
   if (idx < 8) user = 'P1'
   else if (idx < 16) user = 'P2'
-  document.getElementById('tips').innerText = `${user} ${ctls[idx]}？`
+  document.getElementById('tips').innerText = `${user} ${ctls[idx]} ${window.isCombo?'连击':''}？`
 }
 
 function renderCtlList() {
@@ -133,8 +144,17 @@ function renderCtlList() {
   ctls.map((ctl, idx) => {
     const p = document.createElement('p');
     let ctlTar = (ctlTars[idx] || '').split('|')[0];
-    ctlTar = keyMaps[ctlTar] || ctlTar
-    p.innerHTML = `<span>${ctl}</span><span onmouseover={startSetCtl(${idx})}>${ctlTar||''}</span>`;
+    let ctlComboTar = (ctlTars[idx] || '').split('|')[2];
+    ctlTar = keyMaps[ctlTar] || ctlTar;
+    ctlComboTar = keyMaps[ctlComboTar] || ctlComboTar;
+    let innerHTML = '';
+    innerHTML += `<span>${ctl}</span>`;
+    innerHTML += `<span><span onmouseover={startSetCtl(${idx})}>${ctlTar||''}</span>`;
+    if (idx === 4 || idx === 5 || idx === 12 || idx === 13) { // 目前支持配置P1/P2的A/B连击
+      innerHTML += `<span onmouseover={startSetCtl(${idx},{isCombo:true})}>${ctlComboTar||''}</span>`;
+    }
+    innerHTML += `</span>`;
+    p.innerHTML = innerHTML;
     box.appendChild(p)
   })
 }

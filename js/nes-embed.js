@@ -23,6 +23,7 @@ var nes = new jsnes.NES({
 	},
 });
 
+let comboTs = Date.now();
 function onAnimationFrame(){
 	if (window.isStop) return;
 	window.clearTimeout(window.timer);
@@ -31,9 +32,29 @@ function onAnimationFrame(){
 	canvas_ctx.putImageData(image, 0, 0);
 	nes.frame()
 	processGp()
+	let nowTs = Date.now();
+	if (nowTs - comboTs >= 16 && Object.keys(downKeyDic).length) {
+		processCombo()
+	}
 	if (window.isSpeedUp) {
 		nes.frame()
 		nes.frame()
+	}
+}
+
+const downKeyDic = {}
+function processCombo() {
+	// console.log(downKeyDic)
+	for (keyCode in downKeyDic) {
+		let {i, ctlTar, isUp} = downKeyDic[keyCode];
+		_i = Math.abs(i)
+		player = _i / 8 | 0 + 1;
+		if (keyCode !== ctlTar.split('|')[3]) continue; // 只有combo的才触发
+		if (player > 2) continue;
+		callback = isUp ? nes.buttonDown : nes.buttonUp;
+		callback(player, nesKeys[_i%8])
+		downKeyDic[keyCode].isUp = !isUp;
+		// console.log('downKeyDic', key, downKeyDic[key])
 	}
 }
 
@@ -70,7 +91,8 @@ const nesKeys = [
 	jsnes.Controller.BUTTON_START
 ]
 
-function keyboard(callback, event){
+function keyboard(type, event){
+	callback = type === "up" ? nes.buttonUp : nes.buttonDown;
 	for (let i = 0; i < ctls.length; i++) {
 		var player;
 		if (i < 8) player = 1;
@@ -78,7 +100,14 @@ function keyboard(callback, event){
 		else player = undefined;
 		const ctlTar = ctlTars[i] || '';
 		const srcKeyCode = ctlTar.split('|')[1];
-		if (srcKeyCode === event.keyCode.toString()) {
+		const srcComboKeyCode = ctlTar.split('|')[3];
+		const keyCode = event.keyCode.toString();
+		if (srcKeyCode === keyCode || srcComboKeyCode === keyCode) {
+			if (type === "up") {
+				delete downKeyDic[keyCode];
+			} else {
+				downKeyDic[keyCode] = {i,ctlTar};
+			}
 			if (player) callback(player, nesKeys[i%8]);
 			else window.isSpeedUp = event.type === 'keydown'
 		}
@@ -159,5 +188,5 @@ function nes_load_local(file){
 	req.readAsBinaryString(file);
 }
 
-document.addEventListener('keydown', (event) => {keyboard(nes.buttonDown, event)});
-document.addEventListener('keyup', (event) => {keyboard(nes.buttonUp, event)});
+document.addEventListener('keydown', (event) => {keyboard("down", event)});
+document.addEventListener('keyup', (event) => {keyboard("up", event)});
